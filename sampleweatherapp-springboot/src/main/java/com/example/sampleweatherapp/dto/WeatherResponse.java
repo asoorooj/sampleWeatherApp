@@ -230,6 +230,13 @@ public class WeatherResponse {
         }
 
         //Getters and Setters
+
+        @Override
+        public String toString(){
+            return "probabilityOfPercipitationUnitCode: "+this.getProbabilityOfPercipitationUnitCode()+
+                    "\nprobabilityOfPercipitationValue: "+this.getProbabilityOfPercipitationValue();
+        }
+
         public String getProbabilityOfPercipitationUnitCode(){
             return probabilityOfPercipitationUnitCode;
         }
