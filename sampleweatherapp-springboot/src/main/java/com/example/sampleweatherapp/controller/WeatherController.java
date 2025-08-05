@@ -13,8 +13,14 @@ public class WeatherController {
     @Autowired
     private WeatherService weatherService; //weatherService object
 
-    @GetMapping
-    public WeatherResponse getWeather(@RequestParam double latitude, @RequestParam double longitude) { //performs the api call
-        return weatherService.getWeather(latitude, longitude);
+    @GetMapping("/now")
+    public WeatherResponse getWeatherNow(@RequestParam double latitude, @RequestParam double longitude) { //performs the api call
+        return weatherService.getWeatherNow(latitude, longitude);
+    }
+
+    @GetMapping("/today")
+    public WeatherResponse getWeatherToday(@RequestParam double latitude, @RequestParam double longitude) { //performs the api call
+        return weatherService.getWeatherToday(latitude, longitude);
     }
 }
+

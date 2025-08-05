@@ -7,95 +7,169 @@ import VantaBackground from "./vantaClouds.jsx";
 import {BeatLoader} from "react-spinners";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [time, setTime] = useState(new Date());
 
-    const [weather, setWeather] = useState(null);
-    const [error, setError] = useState("");
+    //Updates the time
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setTime(new Date());
+        }, 1000); // Update every second
+
+        // Cleanup function to clear the interval
+        return () => clearInterval(intervalId);
+    }, []);
+
+    //useState variables
+    const [weatherNow, setWeatherNow] = useState(null); //Records current weather
+    const [weatherToday, setWeatherToday] = useState(null); //Records current for today
+    const [errorMessage, setErrorMessage] = useState(""); //Records current error message
+    const [error, setError] = useState(""); //Records current error
+    const [showPopup, setShowPopup] = useState(false);
 
     const latitude = 40.7306;
     const longitude = -73.9352;
 
-    // const latitude = 40.7306;
-    // const longitude = -173.9352;
-
+    //performs initial calls
     useEffect(() => {
+
+        let retryTimeout = null;
+
         const fetchWeather = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/weather?latitude=${latitude}&longitude=${longitude}`);
-                if (!res.ok) {
+                const resNow = await fetch(`http://localhost:8080/api/weather/now?latitude=${latitude}&longitude=${longitude}`); //fetches weather from api
+                if (!resNow.ok) {
+                    const dataNow = await resNow.json();
+                    console.log(resNow)
+                    console.log(dataNow)
+                    setError(dataNow);
                     throw new Error("Weather data fetch failed");
                 }
-                const data = await res.json();
-                    console.log(res)
-                    console.log(data)
-                    console.log(data.name)
-                setWeather(data);
+                const dataNow = await resNow.json();
+                    console.log(resNow)
+                    console.log(dataNow)
+                    console.log(dataNow.name)
+                setWeatherNow(dataNow);
+
+                const resToday = await fetch(`http://localhost:8080/api/weather/today?latitude=${latitude}&longitude=${longitude}`); //fetches weather from api
+                if (!resToday.ok) {
+                    const dataToday = await resToday.json();
+                    console.log(resToday)
+                    console.log(dataToday)
+                    setError(dataToday);
+                    throw new Error("Weather data fetch failed");
+                }
+                const dataToday = await resToday.json();
+                console.log(resToday)
+                console.log(dataToday)
+                console.log(dataToday.name)
+                setWeatherToday(dataToday);
+
             } catch (err) {
                 console.log(err)
-                setError(err.message);
+                setErrorMessage(err.message);
+                retryTimeout = setTimeout(fetchWeather, 3000); // Retry after 3 seconds if there's an error
             }
         };
 
         fetchWeather();
+
+        //resets retry timeout
+        return () => {
+            if (retryTimeout) clearTimeout(retryTimeout);
+        };
+
     }, []);
+
+
+    //performs clock calculations
+    let hours = time.getHours();
+    let isAm = true;
+        if(hours > 12){
+            hours = hours-12;
+            isAm = false;
+        }
+        if(hours == 12){
+            isAm = false;
+        }
+    let minutes = time.getMinutes();
+        if(minutes <= 9){
+            minutes = "0"+minutes;
+        }
 
   return (
     <>
-        {weather ?
+        {weatherNow ? //normal screen
             <div style={{ position: "relative", height: "100vh", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <div style={{ position: "fixed", top: 0, left: 0, zIndex: -1 }}>
                     <VantaBackground />
                 </div>
 
                 <div className="card"  style={{ position: "relative", zIndex: 1, padding: "2rem", color: "#fff", top: "-5%",
-                    "--hover-shadow-color": `${temperatureToColor(weather.temperature)}`}}>
+                    "--hover-shadow-color": `${temperatureToColor(weatherNow.temperature)}`}}>
 
                     <div>
                         <div style={{marginBottom: "2em"}}>
                             <div>
-                                <text style={{fontWeight: "bold", fontSize: "54px"}}>{weather.name}</text>
+                                <text className="individualText" style={{fontWeight: "bold", fontSize: "54px"}}>LOCATION</text>
                             </div>
                             <div>
-                                <text style={{fontSize: "28px"}}>{weather.startTime.substring(0,10)}</text>
+                                <text className="individualText" style={{fontWeight: "bold", fontSize: "54px"}}>{weatherNow.name}{hours}:{minutes} {isAm ? "am" : "pm"}</text>
+                            </div>
+                            <div>
+                                <text className="individualText" style={{fontSize: "28px"}}>{weatherNow.startTime.substring(0,10)}</text>
                             </div>
                         </div>
                         <div style={{justifyContent: "center", marginBottom: "1rem"}}>
                             <div style={{marginBottom: "1em"}}>
-                                <text style={{fontSize: "28px"}}>{weather.dayTime ? "Day Time ☀️" : "Night Time 🌙"}</text>
+                                <text className="individualText" style={{fontSize: "28px"}}>{weatherNow.dayTime ? "Day Time ☀️" : "Night Time 🌙"}</text>
                             </div>
                             <div style={{marginBottom: "1em"}}>
-                                <img src={weather.icon} alt="react.svg" style={{borderRadius: "10px"}}/>
+                                <img src={weatherNow.icon} alt="react.svg" style={{borderRadius: "10px", width: "100px", height: "auto"}}/>
                             </div>
                             <div style={{marginBottom: ""}}>
-                                <text style={{fontWeight: "500", fontSize: "34px"}}>{weather.shortForcast}</text>
+                                <text className="individualText" style={{fontWeight: "500", fontSize: "34px"}}>{weatherNow.shortForcast}</text>
                             </div>
                             <div style={{marginBottom: "1em"}}>
-                                <text style={{fontWeight: "400", fontSize: "36px"}}>{weather.temperature}° {weather.temperatureUnit}</text>
+                                <text className="individualText" style={{fontWeight: "400", fontSize: "36px"}}>{weatherNow.temperature}° {weatherNow.temperatureUnit}</text>
                             </div>
                             <div style={{width: "50%", margin: "auto"}}>
-                                <text style={{fontWeight: "300", fontSize: "20px"}}>{weather.detailedForcast}</text>
+                                <text className="individualText" style={{fontWeight: "300", fontSize: "20px"}}>{weatherNow.detailedForcast}</text>
                             </div>
                         </div>
                     </div>
+                    <button onClick={() => setShowPopup(true)}>More Info </button>
                 </div>
+
+                {/* Popup Modal */}
+                {showPopup && (
+                    <div className="popup-overlay">
+                        <div className="popup-box">
+                            <h3>More Weather Info</h3>
+                            <p>{weatherNow.detailedForecast}</p>
+                            <button onClick={() => setShowPopup(false)}>Close</button>
+                        </div>
+                    </div>
+                )}
+
             </div>
 
                 :
 
-                error ?
+                errorMessage ? //an error is returned
 
                     <div style={{ position: "relative", height: "100vh", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center" }}>
                         <div style={{ position: "fixed", top: 0, left: 0, zIndex: -1 }}>
                             <VantaBackground />
                         </div>
                         <div>
-                            <div style={{margin: "2rem"}}>
-                                <text style={{fontSize: "24px", color: "white"}}>{error} (try reloading)</text>
+                            <div style={{margin: "2rem", display: "flex", flexDirection: "column"}}>
+                                <text style={{fontSize: "24px", color: "white"}}>{errorMessage} (try reloading)</text>
+                                <text style={{fontSize: "36px", color: "white", fontWeight:"bold"}}>{error.status} {error.message}</text>
                             </div>
                         </div>
                     </div>
 
-                    :
+                    : //no error or weather is returned (continuously loading)
 
                     <div style={{ position: "relative", height: "100vh", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center" }}>
                         <div style={{ position: "fixed", top: 0, left: 0, zIndex: -1 }}>
