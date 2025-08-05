@@ -1,5 +1,6 @@
 package com.example.sampleweatherapp.service;
 
+import com.example.sampleweatherapp.dto.WeatherLocationResponse;
 import com.example.sampleweatherapp.dto.WeatherResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +24,7 @@ public class WeatherService {
                 .build();
     }
 
-    //calls api hourly forcast
+    //calls api hourly forecast
     public WeatherResponse getWeatherNow(double latitude, double longitude) {
         try {
             //Call the points endpoint
@@ -82,7 +83,7 @@ public class WeatherService {
         }
     }
 
-    //calls api daily forcast
+    //calls api daily forecast
     public WeatherResponse getWeatherToday(double latitude, double longitude) {
         try {
             //Call the points endpoint
@@ -140,6 +141,39 @@ public class WeatherService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error");
         }
     }
+
+    public WeatherLocationResponse getWeatherLocation(double latitude, double longitude) {
+        try {
+            //Call the points endpoint
+            JsonNode locationData = client.get()
+                    .uri("/points/" + latitude + "," + longitude) //lat&long = 40.7306,-73.9352 ?latitude=40.7306&longitude=-73.9352
+                    .retrieve()
+                    .bodyToMono(JsonNode.class)
+                    .block();
+
+            JsonNode period = locationData.path("properties").path("relativeLocation").path("properties");
+
+            JsonNode theCoordinates = locationData.path("properties").path("relativeLocation").path("geometry").path("coordinates");
+
+            double[] coordinates = {theCoordinates.get(0).asDouble(), theCoordinates.get(1).asDouble()};
+
+            return new WeatherLocationResponse(
+                    period.path("city").asText(),
+                    period.path("state").asText(),
+                    coordinates
+            );
+        } catch (WebClientResponseException.NotFound ex) {
+            // External API responded with 404
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found");
+        } catch (WebClientResponseException ex) {
+            // Other WebClient errors
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Weather API error: " + ex.getStatusCode());
+        } catch (Exception ex) {
+            // Other general errors
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error");
+        }
+    }
+
 }
 
 

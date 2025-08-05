@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import temperatureToColor from "./color.jsx";'./color.jsx'
 import VantaBackground from "./vantaClouds.jsx";
@@ -22,12 +20,19 @@ function App() {
     //useState variables
     const [weatherNow, setWeatherNow] = useState(null); //Records current weather
     const [weatherToday, setWeatherToday] = useState(null); //Records current for today
+    const [weatherLocation, setWeatherLocation] = useState(null); //Records current for today
     const [errorMessage, setErrorMessage] = useState(""); //Records current error message
     const [error, setError] = useState(""); //Records current error
     const [showPopup, setShowPopup] = useState(false);
 
-    const latitude = 40.7306;
+    //toggle useStates
+    const [showCoordinates, setShowCoordinates] = useState(false);
+    const [showMilitaryTime, setShowMilitaryTime] = useState(false);
+    const [showCelcius, setShowCelcius] = useState(false);
+
+    const latitude = 40.7306; //given lat and lon
     const longitude = -73.9352;
+    const baseURL = "http://localhost:8080/api/weather";
 
     //performs initial calls
     useEffect(() => {
@@ -36,7 +41,7 @@ function App() {
 
         const fetchWeather = async () => {
             try {
-                const resNow = await fetch(`http://localhost:8080/api/weather/now?latitude=${latitude}&longitude=${longitude}`); //fetches weather from api
+                const resNow = await fetch(baseURL+`/now?latitude=${latitude}&longitude=${longitude}`); //fetches weather from api
                 if (!resNow.ok) {
                     const dataNow = await resNow.json();
                     console.log(resNow)
@@ -50,7 +55,7 @@ function App() {
                     console.log(dataNow.name)
                 setWeatherNow(dataNow);
 
-                const resToday = await fetch(`http://localhost:8080/api/weather/today?latitude=${latitude}&longitude=${longitude}`); //fetches weather from api
+                const resToday = await fetch(baseURL+`/today?latitude=${latitude}&longitude=${longitude}`); //fetches weather from api
                 if (!resToday.ok) {
                     const dataToday = await resToday.json();
                     console.log(resToday)
@@ -63,6 +68,20 @@ function App() {
                 console.log(dataToday)
                 console.log(dataToday.name)
                 setWeatherToday(dataToday);
+
+                const resLocation = await fetch(baseURL+`/location?latitude=${latitude}&longitude=${longitude}`); //fetches weather from api
+                if (!resLocation.ok) {
+                    const dataLocation = await resLocation.json();
+                    console.log(resLocation)
+                    console.log(dataLocation)
+                    setError(dataLocation);
+                    throw new Error("Weather data fetch failed");
+                }
+                const dataLocation = await resLocation.json();
+                console.log(resLocation)
+                console.log(dataLocation)
+                console.log(dataLocation.name)
+                setWeatherLocation(dataLocation);
 
             } catch (err) {
                 console.log(err)
@@ -79,6 +98,15 @@ function App() {
         };
 
     }, []);
+
+    //function to convert farenheit to celcius
+    function farenheitToCelcius(farenheit){
+        return (farenheit - 32)*(5/9);
+    }
+    //function to convert farenheit to celcius
+    function celciusToFarenheit(celcius){
+        return (celcius/(5/9))+32;
+    }
 
 
     //performs clock calculations
@@ -98,7 +126,7 @@ function App() {
 
   return (
     <>
-        {weatherNow ? //normal screen
+        {weatherNow && weatherToday && weatherLocation ? //normal screen
             <div style={{ position: "relative", height: "100vh", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <div style={{ position: "fixed", top: 0, left: 0, zIndex: -1 }}>
                     <VantaBackground />
@@ -110,30 +138,36 @@ function App() {
                     <div>
                         <div style={{marginBottom: "2em"}}>
                             <div>
-                                <text className="individualText" style={{fontWeight: "bold", fontSize: "54px"}}>LOCATION</text>
+                                <div className="individualText" style={{fontWeight: "bold", fontSize: "48px", cursor: "pointer"}} onClick={() => setShowCoordinates(!showCoordinates)}>
+                                    {showCoordinates ? `[${weatherLocation.coordinates[1]}, ${weatherLocation.coordinates[0]}]`: `${weatherLocation.city}, ${weatherLocation.state}` }
+                                </div>
                             </div>
                             <div>
-                                <text className="individualText" style={{fontWeight: "bold", fontSize: "54px"}}>{weatherNow.name}{hours}:{minutes} {isAm ? "am" : "pm"}</text>
+                                <div className="individualText" style={{fontWeight: "bold", fontSize: "54px", cursor:"pointer"}} onClick={() => setShowMilitaryTime(!showMilitaryTime)}>
+                                    {showMilitaryTime ? `${time.getHours()}:${minutes}` : `${hours}:${minutes} ${isAm ? "am" : "pm"}` }
+                                </div>
                             </div>
                             <div>
-                                <text className="individualText" style={{fontSize: "28px"}}>{weatherNow.startTime.substring(0,10)}</text>
+                                <div className="individualText" style={{fontSize: "28px"}}>{weatherNow.startTime.substring(0,10)}</div>
                             </div>
                         </div>
                         <div style={{justifyContent: "center", marginBottom: "1rem"}}>
                             <div style={{marginBottom: "1em"}}>
-                                <text className="individualText" style={{fontSize: "28px"}}>{weatherNow.dayTime ? "Day Time ☀️" : "Night Time 🌙"}</text>
+                                <div className="individualText" style={{fontSize: "28px"}}>{weatherNow.dayTime ? "Day Time ☀️" : "Night Time 🌙"}</div>
                             </div>
                             <div style={{marginBottom: "1em"}}>
                                 <img src={weatherNow.icon} alt="react.svg" style={{borderRadius: "10px", width: "100px", height: "auto"}}/>
                             </div>
                             <div style={{marginBottom: ""}}>
-                                <text className="individualText" style={{fontWeight: "500", fontSize: "34px"}}>{weatherNow.shortForcast}</text>
+                                <div className="individualText" style={{fontWeight: "500", fontSize: "34px"}}>{weatherNow.shortForecast}</div>
                             </div>
                             <div style={{marginBottom: "1em"}}>
-                                <text className="individualText" style={{fontWeight: "400", fontSize: "36px"}}>{weatherNow.temperature}° {weatherNow.temperatureUnit}</text>
+                                <div className="individualText" style={{fontWeight: "400", fontSize: "36px", cursor:"pointer"}} onClick={() => setShowCelcius(!showCelcius)}>
+                                    {showCelcius ? `${Math.round(farenheitToCelcius(weatherNow.temperature))}° C`: `${weatherNow.temperature}° ${weatherNow.temperatureUnit}`}
+                                </div>
                             </div>
                             <div style={{width: "50%", margin: "auto"}}>
-                                <text className="individualText" style={{fontWeight: "300", fontSize: "20px"}}>{weatherNow.detailedForcast}</text>
+                                <div className="individualText" style={{fontWeight: "300", fontSize: "20px"}}>{weatherNow.detailedForecast}</div>
                             </div>
                         </div>
                     </div>
@@ -144,9 +178,32 @@ function App() {
                 {showPopup && (
                     <div className="popup-overlay">
                         <div className="popup-box">
-                            <h3>More Weather Info</h3>
-                            <p>{weatherNow.detailedForecast}</p>
-                            <button onClick={() => setShowPopup(false)}>Close</button>
+                            <h3 style={{border:" 0px solid black"}}>More Weather Info</h3>
+                            <div style={{border:" 0px solid gray", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                <p style={{border:" 0px solid black", width: "80%"}}> <b>Today's Summary: </b> {weatherToday.detailedForecast}</p>
+                            </div>
+                            <div style={{display: "grid", gridTemplateColumns: "repeat(2, 150px)", gridTemplateRows: "repeat(2, 150px)",
+                                gap: "10px", justifyContent: "center", alignItems: "center", border:" 0px solid black"}}>
+                                <div className="box" style={{ backgroundColor: "lightgray" }}>
+                                    <div className="label">Humidity</div>
+                                    <div className="content">{weatherNow.relativeHumidityValue}%</div>
+                                </div>
+                                <div className="box" style={{ backgroundColor: "lightgray" }}>
+                                    <div className="label">Winds</div>
+                                    <div className="content">{weatherNow.windSpeed}</div>
+                                    <div className="subContent">{weatherNow.windDirection}</div>
+                                </div>
+                                <div className="box" style={{ backgroundColor: "lightgray" }}>
+                                    <div className="label">Percipitation</div>
+                                    <div className="content">{weatherNow.probabilityOfPercipitation.probabilityOfPercipitationValue}%</div>
+                                </div>
+                                <div className="box" style={{ backgroundColor: "lightgray" }}>
+                                    <div className="label">Dew Point</div>
+                                    <div className="content">{Math.round(celciusToFarenheit(weatherNow.dewpointValue))}° F</div>
+                                    <div style={{fontSize: "20px"}}>{weatherNow.dewpointValue}° C</div>
+                                </div>
+                            </div>
+                            <button onClick={() => setShowPopup(false)} style={{marginTop: "10px"}}>Close</button>
                         </div>
                     </div>
                 )}
@@ -162,9 +219,12 @@ function App() {
                             <VantaBackground />
                         </div>
                         <div>
-                            <div style={{margin: "2rem", display: "flex", flexDirection: "column"}}>
-                                <text style={{fontSize: "24px", color: "white"}}>{errorMessage} (try reloading)</text>
-                                <text style={{fontSize: "36px", color: "white", fontWeight:"bold"}}>{error.status} {error.message}</text>
+                            <div style={{margin: "2rem", display: "flex", flexDirection: "column", alignItems: "center"}}>
+                                <div style={{fontSize: "24px", color: "white"}}>{errorMessage} (try reloading)</div>
+                                <div style={{fontSize: "36px", color: "white", fontWeight:"bold"}}>{error.status} {error.message}</div>
+                                <div  style={{margin: "2rem"}}>
+                                    <BeatLoader color="white" size={25}/>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -177,7 +237,7 @@ function App() {
                         </div>
                         <div>
                             <div style={{margin: "2rem"}}>
-                                <text style={{fontSize: "24px", color: "white"}}>Loading... (check internet connection)</text>
+                                {/*<text style={{fontSize: "24px", color: "white"}}>Loading... (check internet connection)</text>*/}
                             </div>
                             <BeatLoader color="white" size={25}/>
                         </div>

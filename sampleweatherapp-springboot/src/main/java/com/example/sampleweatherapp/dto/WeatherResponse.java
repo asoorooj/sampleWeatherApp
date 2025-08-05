@@ -18,8 +18,8 @@ public class WeatherResponse {
     private String windSpeed;
     private String windDirection;
     private String icon;
-    private String shortForcast;
-    private String detailedForcast;
+    private String shortForecast;
+    private String detailedForecast;
 
     public WeatherResponse(){  //no args constructor
 
@@ -28,7 +28,7 @@ public class WeatherResponse {
     public WeatherResponse(int number, String name, String startTime, String endTime, boolean isDayTime, int temperature,
                            String temperatureUnit, String temperatureTrend, ProbabilityOfPercipitation probabilityOfPercipitation,
                            String dewpointUnitCode, int dewpointValue, String relativeHumidityUnitCode, int relativeHumidityValue, String windSpeed,
-                           String windDirection, String icon, String shortForcast, String detailedForcast){
+                           String windDirection, String icon, String shortForecast, String detailedForecast){
 
         this.number = number;
         this.name = name;
@@ -46,8 +46,8 @@ public class WeatherResponse {
         this.windSpeed = windSpeed;
         this.windDirection = windDirection;
         this.icon = icon;
-        this.shortForcast = shortForcast;
-        this.detailedForcast = detailedForcast;
+        this.shortForecast = shortForecast;
+        this.detailedForecast = detailedForecast;
 
     }
 
@@ -197,20 +197,20 @@ public class WeatherResponse {
         this.icon = icon;
     }
 
-    public String getShortForcast() {
-        return shortForcast;
+    public String getShortForecast() {
+        return shortForecast;
     }
 
-    public void setShortForcast(String shortForcast) {
-        this.shortForcast = shortForcast;
+    public void setShortForecast(String shortForecast) {
+        this.shortForecast = shortForecast;
     }
 
-    public String getDetailedForcast() {
-        return detailedForcast;
+    public String getDetailedForecast() {
+        return detailedForecast;
     }
 
-    public void setDetailedForcast(String detailedForcast) {
-        this.detailedForcast = detailedForcast;
+    public void setDetailedForecast(String detailedForecast) {
+        this.detailedForecast = detailedForecast;
     }
 
     public static class ProbabilityOfPercipitation{

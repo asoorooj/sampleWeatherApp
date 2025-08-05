@@ -1,5 +1,6 @@
 package com.example.sampleweatherapp.controller;
 
+import com.example.sampleweatherapp.dto.WeatherLocationResponse;
 import com.example.sampleweatherapp.dto.WeatherResponse;
 import com.example.sampleweatherapp.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,11 @@ public class WeatherController {
     @GetMapping("/today")
     public WeatherResponse getWeatherToday(@RequestParam double latitude, @RequestParam double longitude) { //performs the api call
         return weatherService.getWeatherToday(latitude, longitude);
+    }
+
+    @GetMapping("/location")
+    public WeatherLocationResponse getWeatherLocation(@RequestParam double latitude, @RequestParam double longitude) { //performs the api call
+        return weatherService.getWeatherLocation(latitude, longitude);
     }
 }
 
