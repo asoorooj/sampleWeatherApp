@@ -22,8 +22,7 @@ clone or download the github repository.
 
 ```bash
 git clone https://github.com/asoorooj/sampleWeatherApp.git
-cd project-name
-npm install   # or pip install -r requirements.txt, etc.
+cd sampleWeatherApp   # or pip install -r requirements.txt, etc.
 ```
 
 The project is made up of two separate applications. The Back-end spring boot app handles api calls 
@@ -33,10 +32,13 @@ of this project, they only run on localhost.
 ## Usage
 
 1. Start the Spring Boot app by opening it in an IDE or code editor that supports Java and Spring Boot.
+Open the Spring Boot app directory, install dependencies, then run.
 
 in the terminal run
 
 ```bash
+cd sampleweatherapp-springboot
+mvn clean install
 mvn spring-boot:run
 ```
 
@@ -52,10 +54,13 @@ http://localhost:8080/api/weather/location?latitude=40.7306&longitude=-73.9352
 each link provides a different set of information used by the React web app.
 
 2. Start the React web app by opening it in an IDE or code editor that supports JavaScriptXML and React.
+open the React app directory, install dependencies, then run.
 
 in the terminal run
 
 ```bash
+cd sampleweatherapp-react
+npm install
 npm run dev
 ```
 
