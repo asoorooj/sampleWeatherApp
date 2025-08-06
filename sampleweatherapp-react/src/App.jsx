@@ -127,14 +127,13 @@ function App() {
   return (
     <>
         {weatherNow && weatherToday && weatherLocation ? //normal screen
-            <div style={{ position: "relative", height: "100vh", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <div style={{ position: "relative", height: "90vh", width: "auto", display: "flex", justifyContent: "center", alignItems: "center", border:"0px solid black" }}>
                 <div style={{ position: "fixed", top: 0, left: 0, zIndex: -1 }}>
-                    <VantaBackground />
+                    <VantaBackground/>
                 </div>
 
                 <div className="card"  style={{ position: "relative", zIndex: 1, padding: "2rem", color: "#fff", top: "-5%",
                     "--hover-shadow-color": `${temperatureToColor(weatherNow.temperature)}`}}>
-
                     <div>
                         <div style={{marginBottom: "2em"}}>
                             <div>
