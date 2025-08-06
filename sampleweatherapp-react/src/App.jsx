@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import temperatureToColor from "./color.jsx";'./color.jsx'
+import temperatureToColor from "./color.jsx";
 import VantaBackground from "./vantaClouds.jsx";
 import {BeatLoader} from "react-spinners";
 
@@ -29,6 +29,12 @@ function App() {
     const [showCoordinates, setShowCoordinates] = useState(false);
     const [showMilitaryTime, setShowMilitaryTime] = useState(false);
     const [showCelcius, setShowCelcius] = useState(false);
+    const [colorScheme, setColorScheme] = useState("light");
+
+    const toggleTheme = () => {
+        setColorScheme(prev => (prev === "light" ? "dark" : "light"));
+    };
+
 
     const latitude = 40.7306; //given lat and lon
     const longitude = -73.9352;
@@ -127,82 +133,90 @@ function App() {
   return (
     <>
         {weatherNow && weatherToday && weatherLocation ? //normal screen
+
             <div style={{ position: "relative", height: "90vh", width: "auto", display: "flex", justifyContent: "center", alignItems: "center", border:"0px solid black" }}>
                 <div style={{ position: "fixed", top: 0, left: 0, zIndex: -1 }}>
-                    <VantaBackground/>
+                    <VantaBackground colorScheme={colorScheme}/>
                 </div>
 
-                <div className="card"  style={{ position: "relative", zIndex: 1, padding: "2rem", color: "#fff", top: "-5%",
+                <div className="card" style={{ position: "relative", zIndex: 1, padding: "2em", color: colorScheme === "dark" ? "#fff9f0" : "#fff", top: "-5%",
                     "--hover-shadow-color": `${temperatureToColor(weatherNow.temperature)}`}}>
                     <div>
                         <div style={{marginBottom: "2em"}}>
                             <div>
-                                <div className="individualText" style={{fontWeight: "bold", fontSize: "48px", cursor: "pointer"}} onClick={() => setShowCoordinates(!showCoordinates)}>
+                                <div className={colorScheme === "dark" ? "darkModeText" : "individualText"} style={{fontWeight: "bold", fontSize: "48px", cursor: "pointer"}} onClick={() => setShowCoordinates(!showCoordinates)}>
                                     {showCoordinates ? `[${weatherLocation.coordinates[1]}, ${weatherLocation.coordinates[0]}]`: `${weatherLocation.city}, ${weatherLocation.state}` }
                                 </div>
                             </div>
                             <div>
-                                <div className="individualText" style={{fontWeight: "bold", fontSize: "54px", cursor:"pointer"}} onClick={() => setShowMilitaryTime(!showMilitaryTime)}>
+                                <div className={colorScheme === "dark" ? "darkModeText" : "individualText"} style={{fontWeight: "bold", fontSize: "54px", cursor:"pointer"}} onClick={() => setShowMilitaryTime(!showMilitaryTime)}>
                                     {showMilitaryTime ? `${time.getHours()}:${minutes}` : `${hours}:${minutes} ${isAm ? "am" : "pm"}` }
                                 </div>
                             </div>
                             <div>
-                                <div className="individualText" style={{fontSize: "28px"}}>{weatherNow.startTime.substring(0,10)}</div>
+                                <div className={colorScheme === "dark" ? "darkModeText" : "individualText"} style={{fontSize: "28px"}}>{weatherNow.startTime.substring(0,10)}</div>
                             </div>
                         </div>
                         <div style={{justifyContent: "center", marginBottom: "1rem"}}>
                             <div style={{marginBottom: "1em"}}>
-                                <div className="individualText" style={{fontSize: "28px"}}>{weatherNow.dayTime ? "Day Time ☀️" : "Night Time 🌙"}</div>
+                                <div className={colorScheme === "dark" ? "darkModeText" : "individualText"} style={{fontSize: "28px"}}>{weatherNow.dayTime ? "Day Time ☀️" : "Night Time 🌙"}</div>
                             </div>
                             <div style={{marginBottom: "1em"}}>
                                 <img src={weatherNow.icon} alt="react.svg" style={{borderRadius: "10px", width: "100px", height: "auto"}}/>
                             </div>
                             <div style={{marginBottom: ""}}>
-                                <div className="individualText" style={{fontWeight: "500", fontSize: "34px"}}>{weatherNow.shortForecast}</div>
+                                <div className={colorScheme === "dark" ? "darkModeText" : "individualText"} style={{fontWeight: "500", fontSize: "34px"}}>{weatherNow.shortForecast}</div>
                             </div>
                             <div style={{marginBottom: "1em"}}>
-                                <div className="individualText" style={{fontWeight: "400", fontSize: "36px", cursor:"pointer"}} onClick={() => setShowCelcius(!showCelcius)}>
+                                <div className={colorScheme === "dark" ? "darkModeText" : "individualText"} style={{fontWeight: "400", fontSize: "36px", cursor:"pointer"}} onClick={() => setShowCelcius(!showCelcius)}>
                                     {showCelcius ? `${Math.round(farenheitToCelcius(weatherNow.temperature))}° C`: `${weatherNow.temperature}° ${weatherNow.temperatureUnit}`}
                                 </div>
                             </div>
                             <div style={{width: "50%", margin: "auto"}}>
-                                <div className="individualText" style={{fontWeight: "300", fontSize: "20px"}}>{weatherNow.detailedForecast}</div>
+                                <div className={colorScheme === "dark" ? "darkModeText" : "individualText"} style={{fontWeight: "300", fontSize: "20px"}}>{weatherNow.detailedForecast}</div>
                             </div>
                         </div>
                     </div>
-                    <button onClick={() => setShowPopup(true)}>More Info </button>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px", justifyContent: "center", alignItems: "center" }}>
+                        <button className={colorScheme === "dark" ? "darkButton" : ""} onClick={() => setShowPopup(true)}>More Info </button>
+                        <button className={colorScheme === "dark" ? "darkButton" : ""} onClick={toggleTheme}>
+                            Switch to {colorScheme === "light" ? "Dark" : "Light"} Mode
+                        </button>
+                    </div>
                 </div>
 
                 {/* Popup Modal */}
                 {showPopup && (
                     <div className="popup-overlay">
-                        <div className="popup-box">
-                            <h3 style={{border:" 0px solid black"}}>More Weather Info</h3>
-                            <div style={{border:" 0px solid gray", display:"flex", justifyContent:"center", alignItems:"center"}}>
-                                <p style={{border:" 0px solid black", width: "80%"}}> <b>Today's Summary: </b> {weatherToday.detailedForecast}</p>
+                        <div className={colorScheme === "dark" ? "darkPopup-box": "popup-box"}>
+                            <div>
+                                <h3 style={{border:" 0px solid black", color: colorScheme === "dark" ? "#fff9f0" : ""}}>More Weather Info</h3>
+                                <div style={{border:" 0px solid gray", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                    <p style={{border:" 0px solid black", width: "80%", color: colorScheme === "dark" ? "#fff9f0" : ""}}> <b>Today's Summary: </b> {weatherToday.detailedForecast}</p>
+                                </div>
+                                <div style={{display: "grid", gridTemplateColumns: "repeat(2, 150px)", gridTemplateRows: "repeat(2, 150px)",
+                                    gap: "10px", justifyContent: "center", alignItems: "center", border: "0px solid black"}}>
+                                    <div className={colorScheme === "dark" ? "darkBox": "box"}>
+                                        <div className="label">Humidity</div>
+                                        <div className="content">{weatherNow.relativeHumidityValue}%</div>
+                                    </div>
+                                    <div className={colorScheme === "dark" ? "darkBox": "box"}>
+                                        <div className="label">Winds</div>
+                                        <div className="content">{weatherNow.windSpeed}</div>
+                                        <div className="subContent">{weatherNow.windDirection}</div>
+                                    </div>
+                                    <div className={colorScheme === "dark" ? "darkBox": "box"}>
+                                        <div className="label">Percipitation</div>
+                                        <div className="content">{weatherNow.probabilityOfPercipitation.probabilityOfPercipitationValue}%</div>
+                                    </div>
+                                    <div className={colorScheme === "dark" ? "darkBox": "box"}>
+                                        <div className="label">Dew Point</div>
+                                        <div className="content">{Math.round(celciusToFarenheit(weatherNow.dewpointValue))}° F</div>
+                                        <div style={{fontSize: "20px"}}>{weatherNow.dewpointValue}° C</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div style={{display: "grid", gridTemplateColumns: "repeat(2, 150px)", gridTemplateRows: "repeat(2, 150px)",
-                                gap: "10px", justifyContent: "center", alignItems: "center", border:" 0px solid black"}}>
-                                <div className="box" style={{ backgroundColor: "lightgray" }}>
-                                    <div className="label">Humidity</div>
-                                    <div className="content">{weatherNow.relativeHumidityValue}%</div>
-                                </div>
-                                <div className="box" style={{ backgroundColor: "lightgray" }}>
-                                    <div className="label">Winds</div>
-                                    <div className="content">{weatherNow.windSpeed}</div>
-                                    <div className="subContent">{weatherNow.windDirection}</div>
-                                </div>
-                                <div className="box" style={{ backgroundColor: "lightgray" }}>
-                                    <div className="label">Percipitation</div>
-                                    <div className="content">{weatherNow.probabilityOfPercipitation.probabilityOfPercipitationValue}%</div>
-                                </div>
-                                <div className="box" style={{ backgroundColor: "lightgray" }}>
-                                    <div className="label">Dew Point</div>
-                                    <div className="content">{Math.round(celciusToFarenheit(weatherNow.dewpointValue))}° F</div>
-                                    <div style={{fontSize: "20px"}}>{weatherNow.dewpointValue}° C</div>
-                                </div>
-                            </div>
-                            <button onClick={() => setShowPopup(false)} style={{marginTop: "10px"}}>Close</button>
+                            <button className={colorScheme === "dark" ? "darkButton" : ""} onClick={() => setShowPopup(false)} style={{marginTop: "10px"}}>Close</button>
                         </div>
                     </div>
                 )}
