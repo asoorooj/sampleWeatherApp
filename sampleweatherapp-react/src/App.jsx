@@ -198,7 +198,7 @@ function App() {
                                     gap: "10px", justifyContent: "center", alignItems: "center", border: "0px solid black"}}>
                                     <div className={colorScheme === "dark" ? "darkBox": "box"}>
                                         <div className="label">Humidity</div>
-                                        <div className="content">{weatherNow.relativeHumidityValue}%</div>
+                                        <div className="content">{weatherNow.relativeHumidity.value}%</div>
                                     </div>
                                     <div className={colorScheme === "dark" ? "darkBox": "box"}>
                                         <div className="label">Winds</div>
@@ -207,12 +207,12 @@ function App() {
                                     </div>
                                     <div className={colorScheme === "dark" ? "darkBox": "box"}>
                                         <div className="label">Percipitation</div>
-                                        <div className="content">{weatherNow.probabilityOfPercipitation.probabilityOfPercipitationValue}%</div>
+                                        <div className="content">{weatherNow.probabilityOfPrecipitation.value}%</div>
                                     </div>
                                     <div className={colorScheme === "dark" ? "darkBox": "box"}>
                                         <div className="label">Dew Point</div>
-                                        <div className="content">{Math.round(celciusToFarenheit(weatherNow.dewpointValue))}° F</div>
-                                        <div style={{fontSize: "20px"}}>{weatherNow.dewpointValue}° C</div>
+                                        <div className="content">{Math.round(celciusToFarenheit(weatherNow.dewpoint.value))}° F</div>
+                                        <div style={{fontSize: "20px"}}>{weatherNow.dewpoint.value}° C</div>
                                     </div>
                                 </div>
                             </div>

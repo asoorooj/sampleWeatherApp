@@ -1,7 +1,10 @@
 package com.example.sampleweatherapp.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherResponse {
 
     private int number;
@@ -16,11 +19,9 @@ public class WeatherResponse {
     @NotNull
     private String temperatureUnit;
     private String temperatureTrend;
-    private ProbabilityOfPercipitation probabilityOfPercipitation;
-    private String dewpointUnitCode;
-    private int dewpointValue;
-    private String relativeHumidityUnitCode;
-    private int relativeHumidityValue;
+    private ProbabilityOfPrecipitation probabilityOfPrecipitation;
+    private Dewpoint dewpoint;
+    private RelativeHumidity relativeHumidity;
     private String windSpeed;
     private String windDirection;
     private String icon;
@@ -32,8 +33,8 @@ public class WeatherResponse {
     }
 
     public WeatherResponse(int number, String name, String startTime, String endTime, boolean isDayTime, int temperature,
-                           String temperatureUnit, String temperatureTrend, ProbabilityOfPercipitation probabilityOfPercipitation,
-                           String dewpointUnitCode, int dewpointValue, String relativeHumidityUnitCode, int relativeHumidityValue, String windSpeed,
+                           String temperatureUnit, String temperatureTrend, ProbabilityOfPrecipitation probabilityOfPrecipitation,
+                           Dewpoint dewpoint, RelativeHumidity relativeHumidity, String windSpeed,
                            String windDirection, String icon, String shortForecast, String detailedForecast){
 
         this.number = number;
@@ -44,11 +45,9 @@ public class WeatherResponse {
         this.temperature = temperature;
         this.temperatureUnit = temperatureUnit;
         this.temperatureTrend = temperatureTrend;
-        this.probabilityOfPercipitation = probabilityOfPercipitation;
-        this.dewpointUnitCode = dewpointUnitCode;
-        this.dewpointValue = dewpointValue;
-        this.relativeHumidityUnitCode = relativeHumidityUnitCode;
-        this.relativeHumidityValue = relativeHumidityValue;
+        this.probabilityOfPrecipitation = probabilityOfPrecipitation;
+        this.dewpoint = dewpoint;
+        this.relativeHumidity = relativeHumidity;
         this.windSpeed = windSpeed;
         this.windDirection = windDirection;
         this.icon = icon;
@@ -123,60 +122,28 @@ public class WeatherResponse {
         this.temperatureTrend = temperatureTrend;
     }
 
-    public ProbabilityOfPercipitation getProbabilityOfPercipitation(){
-        return probabilityOfPercipitation;
+    public ProbabilityOfPrecipitation getProbabilityOfPrecipitation(){
+        return probabilityOfPrecipitation;
     }
 
-    public void setProbabilityOfPercipitation(ProbabilityOfPercipitation probabilityOfPercipitation){
-        this.probabilityOfPercipitation = probabilityOfPercipitation;
+    public void setProbabilityOfPrecipitation(ProbabilityOfPrecipitation probabilityOfPrecipitation){
+        this.probabilityOfPrecipitation = probabilityOfPrecipitation;
     }
 
-//        public String getProbabilityOfPercipitationUnitCode() {
-//            return probabilityOfPercipitation.getProbabilityOfPercipitationUnitCode();
-//        }
-//
-//        public void setProbabilityOfPercipitationUnitCode(String probabilityOfPercipitationUnitCode) {
-//            this.probabilityOfPercipitation.setProbabilityOfPercipitationUnitCode(probabilityOfPercipitationUnitCode);
-//        }
-//
-//        public int getProbabilityOfPercipitationValue() {
-//            return probabilityOfPercipitation.getProbabilityOfPercipitationValue();
-//        }
-//
-//        public void setProbabilityOfPercipitationUnitCode(int probabilityOfPercipitationValue) {
-//            this.probabilityOfPercipitation.setProbabilityOfPercipitationValue(probabilityOfPercipitationValue);
-//        }
-
-    public String getDewpointUnitCode() {
-        return dewpointUnitCode;
+    public Dewpoint getDewpoint(){
+        return dewpoint;
     }
 
-    public void setDewpointUnitCode(String dewpointUnitCode) {
-        this.dewpointUnitCode = dewpointUnitCode;
+    public void setDewpoint(Dewpoint dewpoint){
+        this.dewpoint = dewpoint;
     }
 
-    public int getDewpointValue() {
-        return dewpointValue;
+    public RelativeHumidity getRelativeHumidity(){
+        return relativeHumidity;
     }
 
-    public void setDewpointValue(int dewpointValue) {
-        this.dewpointValue = dewpointValue;
-    }
-
-    public String getRelativeHumidityUnitCode() {
-        return relativeHumidityUnitCode;
-    }
-
-    public void setRelativeHumidityUnitCode(String relativeHumidityUnitCode) {
-        this.relativeHumidityUnitCode = relativeHumidityUnitCode;
-    }
-
-    public int getRelativeHumidityValue() {
-        return relativeHumidityValue;
-    }
-
-    public void setRelativeHumidityValue(int relativeHumidityValue) {
-        this.relativeHumidityValue = relativeHumidityValue;
+    public void setRelativeHumidity(RelativeHumidity relativeHumidity){
+        this.relativeHumidity = relativeHumidity;
     }
 
     public String getWindSpeed() {
@@ -219,19 +186,19 @@ public class WeatherResponse {
         this.detailedForecast = detailedForecast;
     }
 
-    public static class ProbabilityOfPercipitation{
+    public static class ProbabilityOfPrecipitation{
 
-        private String probabilityOfPercipitationUnitCode;
-        private int probabilityOfPercipitationValue;
+        private String unitCode;
+        private int value;
 
-        public ProbabilityOfPercipitation(){//no args
+        public ProbabilityOfPrecipitation(){//no args
 
         }
 
-        public ProbabilityOfPercipitation(String probabilityOfPercipitationUnitCode, int probabilityOfPercipitationValue){
+        public ProbabilityOfPrecipitation(String unitCode, int value){
 
-            this.probabilityOfPercipitationUnitCode = probabilityOfPercipitationUnitCode;
-            this.probabilityOfPercipitationValue = probabilityOfPercipitationValue;
+            this.unitCode = unitCode;
+            this.value = value;
 
         }
 
@@ -239,25 +206,70 @@ public class WeatherResponse {
 
         @Override
         public String toString(){
-            return "probabilityOfPercipitationUnitCode: "+this.getProbabilityOfPercipitationUnitCode()+
-                    "\nprobabilityOfPercipitationValue: "+this.getProbabilityOfPercipitationValue();
+            return "probabilityOfPrecipitationUnitCode: "+this.getUnitCode()+
+                    "\nprobabilityOfPrecipitationValue: "+this.getValue();
         }
 
-        public String getProbabilityOfPercipitationUnitCode(){
-            return probabilityOfPercipitationUnitCode;
+        public String getUnitCode(){
+            return unitCode;
         }
 
-        public void setProbabilityOfPercipitationUnitCode(String probabilityOfPercipitationUnitCode){
-            this.probabilityOfPercipitationUnitCode = probabilityOfPercipitationUnitCode;
+        public void setUnitCode(String unitCode){
+            this.unitCode = unitCode;
         }
 
-        public int getProbabilityOfPercipitationValue() {
-            return probabilityOfPercipitationValue;
+        public int getValue() {
+            return value;
         }
 
-        public void setProbabilityOfPercipitationValue(int probabilityOfPercipitationValue) {
-            this.probabilityOfPercipitationValue = probabilityOfPercipitationValue;
+        public void setValue(int value) {
+            this.value = value;
         }
 
+    }
+
+    public static class Dewpoint {
+
+        public Dewpoint(){//no args
+
+        }
+
+        public Dewpoint(String unitCode, int value){
+
+            this.unitCode = unitCode;
+            this.value = value;
+
+        }
+
+        private String unitCode;
+        private int value;
+
+        // Getters and setters
+        public String getUnitCode() { return unitCode; }
+        public void setUnitCode(String unitCode) { this.unitCode = unitCode; }
+        public int getValue() { return value; }
+        public void setValue(int value) { this.value = value; }
+    }
+
+    public static class RelativeHumidity {
+
+        public RelativeHumidity(){//no args
+
+        }
+
+        public RelativeHumidity(String unitCode, int value){
+
+            this.unitCode = unitCode;
+            this.value = value;
+
+        }
+
+        private String unitCode;
+        private int value;
+
+        public String getUnitCode() { return unitCode; }
+        public void setUnitCode(String unitCode) { this.unitCode = unitCode; }
+        public int getValue() { return value; }
+        public void setValue(int value) { this.value = value; }
     }
 }
