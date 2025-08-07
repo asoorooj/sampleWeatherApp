@@ -1,13 +1,19 @@
 package com.example.sampleweatherapp.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class WeatherResponse {
 
     private int number;
     private String name;
+    @NotNull
     private String startTime;
+    @NotNull
     private String endTime;
     private boolean dayTime;
+    @NotNull
     private int temperature;
+    @NotNull
     private String temperatureUnit;
     private String temperatureTrend;
     private ProbabilityOfPercipitation probabilityOfPercipitation;

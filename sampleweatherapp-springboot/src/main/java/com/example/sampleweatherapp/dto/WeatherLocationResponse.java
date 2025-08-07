@@ -1,9 +1,14 @@
 package com.example.sampleweatherapp.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class WeatherLocationResponse {
 
+    @NotNull
     private String city;
+    @NotNull
     private String state;
+    @NotNull
     private double[] coordinates;
 
     public WeatherLocationResponse(){

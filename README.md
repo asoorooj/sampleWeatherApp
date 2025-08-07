@@ -98,6 +98,7 @@ and may direct the user to fixing the error.
 ## Assumptions
 
 - This app is only for the NYC metropolitan area
+- Informs the current conditions (hourly and/or daily)
 - Web app that is comprehensible from mobile devices or desktops
 - Simple weather information to be observed at a glance
 - Made with Scalability in mind
